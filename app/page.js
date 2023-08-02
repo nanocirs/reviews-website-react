@@ -39,7 +39,7 @@ async function checkDatabase() {
     }
 }
 
-export async function getReviews() {
+async function getReviews() {
     try {
         const connection = databaseConnection();
 
