@@ -2,6 +2,8 @@ import { databaseConnection, isConnectionOpen } from "../lib/db";
 import ReviewSubmit from "../components/reviewSubmit";
 import ReviewsContainer from "../components/reviewsContainer";
 
+export const revalidate = 0;
+
 async function checkDatabase() {
     try {
         const connection = databaseConnection();
