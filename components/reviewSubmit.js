@@ -12,8 +12,8 @@ export default function ReviewSubmit() {
     const [reviewInput, setReviewInputValue] = useState('');
     const [inputWarnings, setInputWarnings] = useState([]);
 
-    const handleStarLeave = useCallback(() => confirmedStars ? null : setStars(1), []);
-    const handleStarEnter = useCallback((index) => confirmedStars ? null : setStars(index + 1), []);
+    const handleStarLeave = useCallback(() => confirmedStars ? null : setStars(1), [confirmedStars]);
+    const handleStarEnter = useCallback((index) => confirmedStars ? null : setStars(index + 1), [confirmedStars]);
     const handleStarClick = useCallback((index) => setConfirmedStars(index + 1), []);
     const handleUserInputChange = (e) => setUserInputValue(e.target.value);
     const handleReviewInputChange = (e) => setReviewInputValue(e.target.value);
