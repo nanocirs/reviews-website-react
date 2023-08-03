@@ -1,6 +1,8 @@
+import { RowDataPacket, Connection } from "mysql2";
+
 const mysql = require('mysql2');
 
-function databaseConnection() {
+export function databaseConnection() : Connection {
      return mysql.createConnection({
         host: process.env.DB_HOST,
         user: process.env.DB_USER,
@@ -9,17 +11,12 @@ function databaseConnection() {
     });
 }
     
-async function isConnectionOpen(connection) {
+export async function isConnectionOpen(connection : Connection) {
     try {
-        const [rows] = await connection.promise().query('SELECT 1');
+        const [rows] = await connection.promise().query<RowDataPacket[]>('SELECT 1');
         return true;
     } 
-    catch (error) {
+    catch {
         return false;
     }    
-}
-
-module.exports = {
-    databaseConnection,
-    isConnectionOpen
 }

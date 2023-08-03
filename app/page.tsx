@@ -1,17 +1,27 @@
+import { RowDataPacket } from "mysql2";
 import { databaseConnection, isConnectionOpen } from "../lib/db";
 import ReviewSubmit from "../components/reviewSubmit";
 import ReviewsContainer from "../components/reviewsContainer";
+import { Connection } from "mysql2/typings/mysql/lib/Connection";
 
-export const revalidate = 0;
+export const revalidate : number = 0;
 
-async function checkDatabase() {
+interface ReviewRow extends RowDataPacket {
+    id: number,
+    user: string,
+    review: string,
+    date: Date,
+    rating: number
+}
+
+async function checkDatabase() : Promise<void> {
     try {
-        const connection = databaseConnection();
+        const connection : Connection = databaseConnection();
 
         if (await isConnectionOpen(connection)) {
-            const [result] = await connection.promise().query('SHOW TABLES LIKE "reviews"');
+            const [result] = await connection.promise().query<RowDataPacket[]>('SHOW TABLES LIKE "reviews"');
 
-            if (result.length > 0) {
+            if (Array.isArray(result) && result.length > 0) {
                 connection.end();
                 return;
             }
@@ -34,17 +44,17 @@ async function checkDatabase() {
             throw new Error('Cannot connect to database.');
         }
     }
-    catch (error) {
+    catch (error : any) {
         throw error;
     }
 }
 
-async function getReviews() {
+async function getReviews() : Promise<ReviewRow[]> {
     try {
-        const connection = databaseConnection();
+        const connection : Connection = databaseConnection();
 
         if (await isConnectionOpen(connection)) {
-            const [rows] = await connection.promise().query('SELECT id, user, review, date, rating FROM reviews ORDER BY date DESC');
+            const [rows] = await connection.promise().query<ReviewRow[]>('SELECT id, user, review, date, rating FROM reviews ORDER BY date DESC');
             connection.end();
             return rows;
         }
@@ -52,16 +62,14 @@ async function getReviews() {
             throw new Error('Could not connect to database.');
         }
     }
-    catch (error) {
+    catch (error: any) {
         throw error;
     }
 }
 
-
 export default async function Page() {
     await checkDatabase();
-
-    const review_list = await getReviews();
+    const review_list : ReviewRow[] = await getReviews();
 
     return (
         <>

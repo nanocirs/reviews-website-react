@@ -2,12 +2,21 @@
 import { useState } from "react";
 import Review from "./review";
 import ReactPaginate from "react-paginate";
+import { RowDataPacket } from "mysql2";
 
-export default function ReviewsContainer({reviews}) {
+interface ReviewRow extends RowDataPacket {
+    id: number,
+    user: string,
+    review: string,
+    date: Date,
+    rating: number
+}
+
+export default function ReviewsContainer({reviews} : { reviews: ReviewRow[] }) {
     const [currentPage, setCurrentPage] = useState(1);
-    const reviewsPerPage = 10;
+    const reviewsPerPage : number = 10;
 
-    let reviewList = null;
+    let reviewList : JSX.Element[] | null = null;
 
     if (Array.isArray(reviews) && reviews.length > 0) {
         reviewList = reviews.map((review) => 
@@ -21,16 +30,16 @@ export default function ReviewsContainer({reviews}) {
         );
     }
 
-    let currentReviews = null;
+    let currentReviews : JSX.Element[] | null = null;
 
     if (reviewList) {
-        const lastReviewIndex = currentPage * reviewsPerPage;
-        const indexOfFirstPost = lastReviewIndex - reviewsPerPage;
+        const lastReviewIndex : number = currentPage * reviewsPerPage;
+        const indexOfFirstPost : number = lastReviewIndex - reviewsPerPage;
         currentReviews = reviewList.slice(indexOfFirstPost, lastReviewIndex);
     }
-
-    const handlePageChange = (e) => {
-        setCurrentPage(e.selected + 1)
+    
+    function handlePageChange({selected} : {selected : number}) : void {
+        setCurrentPage(selected + 1);
     }
 
     return (
@@ -50,8 +59,7 @@ export default function ReviewsContainer({reviews}) {
                 marginPagesDisplayed={3}
                 pageRangeDisplayed={1}
             />
-            : 
-            null
+            : null
         }
     </>
     );
